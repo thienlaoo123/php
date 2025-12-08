@@ -1,25 +1,45 @@
 <?php
 namespace MyProject\Classes;
 
-class SuperUser extends User {
+/**
+ * Класс суперпользователя, расширяющий базовый класс User.
+ *
+ * Добавляет свойство роли пользователя и выводит расширенную
+ * информацию о пользователе, включая его роль.
+ */
+class SuperUser extends User
+{
+    /**
+     * Роль пользователя (например, admin, moderator и т.п.).
+     *
+     * @var string
+     */
     public $role;
 
-    public function __construct(string $name, string $login, string $password, string $role) {
+    /**
+     * Конструктор суперпользователя.
+     *
+     * @param string $name     Имя пользователя.
+     * @param string $login    Логин пользователя.
+     * @param string $password Пароль пользователя.
+     * @param string $role     Роль пользователя.
+     */
+    public function __construct($name, $login, $password, $role){
         parent::__construct($name, $login, $password);
         $this->role = $role;
     }
 
     /**
-     * Выводит информацию о суперпользователе
+     * Выводит информацию о суперпользователе:
+     * имя, логин, пароль и роль.
+     *
+     * @return void
      */
-    public function showInfo(): void {
-        echo "<div style='border: 2px solid #f00; padding: 10px; margin: 10px; background: #ffe6e6;'>";
-        echo "<h3>Информация о СУПЕРпользователе:</h3>";
-        echo "<p><strong>Имя:</strong> {$this->name}</p>";
-        echo "<p><strong>Логин:</strong> {$this->login}</p>";
-        echo "<p><strong>Пароль:</strong> ******</p>";
-        echo "<p><strong>Роль:</strong> {$this->role}</p>";
-        echo "</div>";
+    public function showInfo(){
+        echo 'Имя: '   . $this->getName()   . '<br>';
+        echo 'Логин: ' . $this->getLogin()  . '<br>';
+        echo 'Пароль: ' . $this->getPassword() . '<br>';
+        echo 'Роль: '  . $this->role . '<br>';
+        echo '<hr>';
     }
 }
-?>
