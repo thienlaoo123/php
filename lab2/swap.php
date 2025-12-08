@@ -1,32 +1,40 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * Функция для обмена значениями двух переменных
+ * 
+ * Принимает две переменные по ссылке и меняет их значения местами
+ * 
+ * @param mixed &$a Первая переменная (передается по ссылке)
+ * @param mixed &$b Вторая переменная (передается по ссылке)
+ * @return void
+ */
 function swap(&$a, &$b): void
 {
+    /**
+     * Временная переменная для хранения значения $a
+     * @var mixed $temp
+     */
     $temp = $a;
     $a = $b;
     $b = $temp;
 }
-?>
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Демонстрация функции swap</title>
-</head>
-<body>
-    <h1>Демонстрация функции swap</h1>
-    <?php
-    $a = 5;
-    $b = 8;
-    echo "До swap: a = $a, b = $b<br>";
-    swap($a, $b);
-    echo "После swap: a = $a, b = $b<br>";
-    echo "5 === \$b: " . (5 === $b ? 'true' : 'false') . "<br>";
-    echo "8 === \$a: " . (8 === $a ? 'true' : 'false') . "<br><br>";
-    ?> 
-</body>
-</html>
+// Пример использования
+$a = 5;
+$b = 8;
+
+echo "До вызова swap(): a = $a, b = $b\n";
+
+swap($a, $b);
+
+echo "После вызова swap(): a = $a, b = $b\n";
+
+// Проверка условия из задания
+if (5 === $b) {
+    echo "5 === \$b: true\n";
+} else {
+    echo "5 === \$b: false\n";
+}
+?>
