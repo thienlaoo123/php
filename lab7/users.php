@@ -1,42 +1,41 @@
 <?php
 declare(strict_types=1);
 
-/**
- * Автозагрузчик классов
- */
-spl_autoload_register(function ($className) {
-    // Преобразуем пространство имен в путь к файлу
-    $filePath = str_replace('MyProject\\Classes\\', 'MyProject/Classes/', $className) . '.php';
-    
-    if (file_exists($filePath)) {
-        require_once $filePath;
-        return true;
+spl_autoload_register(function (string $class): void {
+    // Префикс нашего пространства имён
+    $prefix = 'MyProject\\Classes\\';
+
+    // Базовая директория для классов относительно users.php
+    // (users.php в lab7, классы в lab7/MyProject/Classes)
+    $baseDir = __DIR__ . '/MyProject/Classes/';
+
+    // Если класс не из нашего пространства имён — пропускаем
+    if (strpos($class, $prefix) !== 0) {
+        return;
     }
-    return false;
+
+    // Имя класса без префикса пространства имён (User, SuperUser)
+    $relativeClass = substr($class, strlen($prefix));
+
+    // Формируем путь к файлу
+    $file = $baseDir . $relativeClass . '.php';
+
+    if (is_file($file)) {
+        require $file;
+    }
 });
 
 use MyProject\Classes\User;
 use MyProject\Classes\SuperUser;
 
-echo "<h1>Демонстрация работы с классами</h1>";
+$user1 = new User('Иван', 'ivan', 'pass1');
+$user2 = new User('Мария', 'maria', 'pass2');
+$user3 = new User('Пётр', 'petr', 'pass3');
 
-// Создаем обычных пользователей
-echo "<h2>Обычные пользователи:</h2>";
-$user1 = new User("Иван Иванов", "ivanov", "password123");
-$user2 = new User("Петр Петров", "petrov", "qwerty123");
-$user3 = new User("Николай Сидоров", "sidorov", "secret123");
+$super = new SuperUser('Админ', 'admin', 'root', 'administrator');
 
-// Выводим информацию о пользователях
 $user1->showInfo();
 $user2->showInfo();
 $user3->showInfo();
 
-// Создаем суперпользователя
-echo "<h2>Суперпользователь:</h2>";
-$superUser = new SuperUser("Администратор", "admin", "admin123", "Супер-администратор");
-
-// Выводим информацию о суперпользователе
-$superUser->showInfo();
-
-echo "<p>Скрипт завершен. Объекты будут уничтожены автоматически.</p>";
-?>
+$super->showInfo();
