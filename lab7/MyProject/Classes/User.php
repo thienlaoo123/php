@@ -14,21 +14,21 @@ class User
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * Логин пользователя.
      *
      * @var string
      */
-    public $login;
+    public string $login;
 
     /**
      * Пароль пользователя.
      *
      * @var string
      */
-    private $password;
+    private string $password;
 
     /**
      * Конструктор пользователя.
@@ -37,7 +37,8 @@ class User
      * @param string $login    Логин пользователя.
      * @param string $password Пароль пользователя.
      */
-    public function __construct($name, $login, $password){
+    public function __construct(string $name, string $login, string $password)
+    {
         $this->name     = $name;
         $this->login    = $login;
         $this->password = $password;
@@ -48,7 +49,8 @@ class User
      *
      * @return string Имя пользователя.
      */
-    public function getName(){
+    public function getName(): string
+    {
         return $this->name;
     }
 
@@ -57,7 +59,8 @@ class User
      *
      * @return string Логин пользователя.
      */
-    public function getLogin(){
+    public function getLogin(): string
+    {
         return $this->login;
     }
 
@@ -66,7 +69,8 @@ class User
      *
      * @return string Пароль пользователя.
      */
-    public function getPassword(){
+    public function getPassword(): string
+    {
         return $this->password;
     }
 
@@ -76,7 +80,8 @@ class User
      *
      * @return void
      */
-    public function showInfo(){
+    public function showInfo(): void
+    {
         echo 'Имя: '    . $this->name     . '<br />';
         echo 'Логин: '  . $this->login    . '<br />';
         echo 'Пароль: ' . $this->password . '<br />';
@@ -87,10 +92,9 @@ class User
      * Деструктор пользователя.
      *
      * Выводит сообщение об удалении пользователя.
-     *
-     * @return void
      */
-    public function __destruct(){
+    public function __destruct(): void
+    {
         echo "Пользователь {$this->getLogin()} удалён<br>";
     }
 }
