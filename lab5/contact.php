@@ -1,70 +1,66 @@
+<?php declare(strict_types=1); ?>
+
 <?php
-declare(strict_types=1);
+/**
+ * Отправляет письмо с формы обратной связи.
+ *
+ * @param string $subject Тема письма.
+ * @param string $body    Текст письма.
+ * @return bool true при успешной отправке.
+ */
+function sendFeedback(string $subject, string $body): bool
+{
+    $to = 'rednickin.nikita@yandex.ru';
+    $headers  = "From: admin@center.ogu\r\n";
+    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-$message = "";
+    return mail($to, $subject, $body, $headers);
+}
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $subject = filter_input(INPUT_POST, 'subject', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    $body = filter_input(INPUT_POST, 'body', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$sent  = null;
+$error = '';
 
-    // Проверка на пустые поля
-    if (empty($subject) || empty($body)) {
-        $message = "<p>Пожалуйста, заполните все поля.</p>";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $subject = htmlspecialchars(strip_tags(trim($_POST['subject'] ?? '')), ENT_QUOTES, 'UTF-8');
+    $body    = htmlspecialchars(strip_tags(trim($_POST['body'] ?? '')), ENT_QUOTES, 'UTF-8');
+
+    if ($subject === '' || $body === '') {
+        $error = 'Заполните все поля формы.';
     } else {
-        $to = "cool.dnevnik-ru2013@yandex.ru";
-        $headers = 'From: admin@center.ogu' . "\r\n" .
-                   'Reply-To: admin@center.ogu' . "\r\n" .
-                   'X-Mailer: PHP/' . phpversion();
-
-        if (mail($to, $subject, $body, $headers)) {
-            $message = "<p>Сообщение успешно отправлено!</p>";
-        } else {
-            $message = "<p>Произошла ошибка при отправке сообщения.</p>";
+        $sent = sendFeedback($subject, $body);
+        if (!$sent) {
+            $error = 'Не удалось отправить письмо.';
         }
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
-
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
     <title>Контакты</title>
-    <meta charset="utf-8">
 </head>
-
 <body>
 
-    <section>
-        <!-- Заголовок -->
-        <h1>Обратная связь</h1>
-        <!-- Заголовок -->
-        <!-- Область основного контента -->
-        <h3>Адрес</h3>
-        <address>123456 Москва, Малый Американский переулок 21</address>
-        <h3>Задайте вопрос</h3>
-        <form method='post'>
-            <label>Тема письма: </label>
-            <br>
-            <input name='subject' type='text' size="50" required>
-            <br>
-            <label>Содержание: </label>
-            <br>
-            <textarea name='body' cols="50" rows="10" required></textarea>
-            <br>
-            <br>
-            <input type='submit' value='Отправить'>
-        </form>
+<h1>Обратная связь</h1>
 
-        <?= $message ?>
-        <!-- Область основного контента -->
-    </section>
+<?php if ($error !== ''): ?>
+    <p style="color:red;"><?=htmlspecialchars($error, ENT_QUOTES, 'UTF-8')?></p>
+<?php elseif ($sent === true): ?>
+    <p style="color:green;">Сообщение успешно отправлено.</p>
+<?php endif; ?>
 
-    <footer>
-        <!-- Нижняя часть страницы -->
-        &copy; Супер Мега Веб-мастер, 2000 &ndash; 20xx
-        <!-- Нижняя часть страницы -->
-    </footer>
+<form method="post" action="">
+    <p>
+        <label for="subject">Тема</label><br>
+        <input type="text" name="subject" id="subject" required>
+    </p>
+    <p>
+        <label for="body">Сообщение</label><br>
+        <textarea name="body" id="body" rows="5" cols="40" required></textarea>
+    </p>
+    <button type="submit">Отправить</button>
+</form>
+
 </body>
-
 </html>
