@@ -1,57 +1,79 @@
+<?php declare(strict_types=1); ?>
+
 <?php
-declare(strict_types=1);
+/**
+ * Имя текстового файла для хранения записей гостевой книги.
+ */
+const GUESTBOOK_FILE = __DIR__ . '/db/guests.txt';
 
+/**
+ * Сохраняет запись пользователя в файл гостевой книги.
+ *
+ * @param string $firstName Имя.
+ * @param string $lastName  Фамилия.
+ * @return void
+ */
+function saveGuest(string $firstName, string $lastName): void
+{
+    // Фильтрация
+    $firstName = htmlspecialchars(strip_tags(trim($firstName)), ENT_QUOTES, 'UTF-8');
+    $lastName  = htmlspecialchars(strip_tags(trim($lastName)), ENT_QUOTES, 'UTF-8');
 
-define('FILENAME', __DIR__.'/db/users.txt');
+    if ($firstName === '' && $lastName === '') {
+        return;
+    }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fname'], $_POST['lname'])) {
+    // Одна строка = один пользователь
+    $line = $firstName . ' ' . $lastName . PHP_EOL;
 
-    $fname = trim(htmlspecialchars($_POST['fname']));
-    $lname = trim(htmlspecialchars($_POST['lname']));
+    // Запись в файл с добавлением в конец
+    file_put_contents(GUESTBOOK_FILE, $line, FILE_APPEND | LOCK_EX);
+}
 
-    $line = "$lname $fname\n";
-    file_put_contents(FILENAME, $line, FILE_APPEND);
+// ЗАДАНИЕ 1: обработка отправки формы
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    saveGuest($_POST['fname'] ?? '', $_POST['lname'] ?? '');
 
-    header("Location: " . $_SERVER['PHP_SELF']);
+    // Перезапрос страницы, чтобы избежать повторной отправки POST
+    header('Location: ' . htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'));
     exit;
 }
 ?>
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Работа с файлами</title>
 </head>
-
 <body>
 
-    <h1>Заполните форму</h1>
+<h1>Заполните форму</h1>
 
-    <form method="post" action="<?= $_SERVER['PHP_SELF'] ?>">
-        Имя: <input type="text" name="fname" required><br>
-        Фамилия: <input type="text" name="lname" required><br>
-        <br>
-        <input type="submit" value="Отправить!">
-    </form>
+<form method="post" action="<?=htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8')?>">
+    Имя: <input type="text" name="fname"><br>
+    Фамилия: <input type="text" name="lname"><br>
+    <br>
+    <input type="submit" value="Отправить!">
+</form>
 
-    <?php
-    
+<?php
+// ЗАДАНИЕ 2: вывод содержимого файла
+if (file_exists(GUESTBOOK_FILE)) {
+    $lines = file(GUESTBOOK_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-    if (file_exists(FILENAME)) {
-        $lines = file(FILENAME, FILE_IGNORE_NEW_LINES);
+    if (!empty($lines)) {
+        echo '<h2>Список пользователей</h2>';
+        echo '<ol>';
+        foreach ($lines as $idx => $line) {
+            echo '<li>' . htmlspecialchars($line, ENT_QUOTES, 'UTF-8') . '</li>';
+        }
+        echo '</ol>';
 
-        foreach ($lines as $lineNumber => $line)
-            echo ($lineNumber + 1) . '. ' . htmlspecialchars($line) . "<br>";
-
-        echo "<br>Размер файла: " . filesize(FILENAME) . ' байт.';
-    } else {
-        echo "Файл не существует.";
+        $size = filesize(GUESTBOOK_FILE);
+        echo '<p>Размер файла: ' . (int)$size . ' байт</p>';
     }
-    ?>
+}
+?>
 
 </body>
-
 </html>
