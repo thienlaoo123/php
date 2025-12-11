@@ -44,10 +44,44 @@ $color = ($color) ? $color : $default_color;
     <input type='submit' value='Создать'>
 </form>
 <br>
+
+
+
 <!-- Таблица -->
 <?php 
-// Вызываем функцию getTable() с параметрами
-getTable($rows, $cols, $color);
+// Изменяем вызов функции getTable() чтобы она использовала CSS классы
+// Предполагаем, что функция getTable() генерирует таблицу
+// Если не можете изменить функцию, добавьте обертку
 ?>
-<!-- Таблица -->
+
+<!-- Вариант 1: Если можно изменить функцию getTable() -->
+<?php
+// Внутри функции getTable() нужно будет использовать CSS классы вместо атрибутов
+// Например, вместо <table border='1' width='200'> использовать <table class="mult-table">
+// И вместо <th bgcolor='lightgreen'> использовать <th>
+?>
+
+<!-- Вариант 2: Если не можете изменить функцию getTable(), оберните таблицу -->
+<div style="border: 1px solid #000; width: 200px; display: inline-block; overflow: auto;">
+    <?php getTable($rows, $cols, $color); ?>
+</div>
+
+<!-- Вариант 3: Исправить саму функцию getTable() в файле lib.inc.php -->
+<?php
+/*
+// Пример исправленной функции getTable():
+function getTable($rows, $cols, $color) {
+    echo '<table class="mult-table">';
+    for ($i = 1; $i <= $rows; $i++) {
+        echo '<tr>';
+        for ($j = 1; $j <= $cols; $j++) {
+            $result = $i * $j;
+            echo "<td>$result</td>";
+        }
+        echo '</tr>';
+    }
+    echo '</table>';
+}
+*/
+?>
 <!-- Область основного контента -->
