@@ -93,7 +93,7 @@ class User
      *
      * Выводит сообщение об удалении пользователя.
      */
-    public function __destruct(): void
+    public function __destruct()
     {
         echo "Пользователь {$this->getLogin()} удалён<br>";
     }
