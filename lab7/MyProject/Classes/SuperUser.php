@@ -35,7 +35,7 @@ class SuperUser extends User
      *
      * @return void
      */
-    public function showInfo(){
+    public function showInfo(): void {
         echo 'Имя: '   . $this->getName()   . '<br>';
         echo 'Логин: ' . $this->getLogin()  . '<br>';
         echo 'Пароль: ' . $this->getPassword() . '<br>';
